@@ -6,6 +6,9 @@ venv/
 .idea/
 .vscode/
 
+# macOS
+.DS_Store
+
 # Python
 __pycache__/
 *.pyc
