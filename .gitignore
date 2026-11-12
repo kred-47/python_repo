@@ -19,3 +19,6 @@ __pycache__/
 
 # Environment
 .env
+
+# Data (скачивается через src/data_loader.py)
+data/raw/

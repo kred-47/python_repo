@@ -10,6 +10,7 @@
 ```
 src/model_train.py   обучение модели и сохранение в models/sentiment_model.pkl
 src/model_api.py     FastAPI-сервис, загружает модель и отдаёт /predict
+src/data_loader.py   скачивает датасет отзывов в data/raw/kinopoisk_reviews.csv
 models/              сохранённая модель (лежит в репозитории, пересобирается скриптом)
 requirements.txt     зависимости
 ```
@@ -33,6 +34,17 @@ python src/model_train.py
 ```bash
 uvicorn src.model_api:app --reload
 ```
+
+## Данные
+
+Датасет отзывов Кинопоиска (~590 тыс. строк, 127 МБ) в репозиторий не входит — он
+скачивается скриптом:
+
+```bash
+python src/data_loader.py
+```
+
+Результат — `data/raw/kinopoisk_reviews.csv` (колонки `text`, `label`), папка в `.gitignore`.
 
 ## Эндпоинты
 
