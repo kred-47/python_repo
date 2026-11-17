@@ -1,0 +1,9 @@
+services:
+  api:
+    build: .                          # Собрать образ из Dockerfile в текущей папке
+    container_name: sentiment_api     # Имя контейнера
+    ports:
+      - "8000:8000"                   # Проброс порта: хост:контейнер
+    volumes:
+      - ./models:/app/models          # Монтируем папку models (чтобы обновления модели подхватывались без пересборки)
+    restart: unless-stopped           # Автоматически перезапускать при падении

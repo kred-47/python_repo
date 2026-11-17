@@ -1,0 +1,23 @@
+# Виртуальное окружение
+.venv/
+venv/
+
+# Git
+.git/
+.gitignore
+
+# macOS
+.DS_Store
+
+# IDE
+.idea/
+.vscode/
+*.swp
+
+# Данные (обучаем локально, в контейнере только API)
+data/
+
+# Кэш Python
+__pycache__/
+*.pyc
+.pytest_cache/
