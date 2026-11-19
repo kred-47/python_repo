@@ -1,9 +1,22 @@
 services:
-  api:
-    build: .                          # Собрать образ из Dockerfile в текущей папке
-    container_name: sentiment_api     # Имя контейнера
+  # Классический быстрый сервис (TF-IDF)
+  classic_api:
+    build: .
+    container_name: sentiment_classic
     ports:
-      - "8000:8000"                   # Проброс порта: хост:контейнер
+      - "8000:8000"
     volumes:
-      - ./models:/app/models          # Монтируем папку models (чтобы обновления модели подхватывались без пересборки)
-    restart: unless-stopped           # Автоматически перезапускать при падении
+      - ./models:/app/models
+    restart: unless-stopped
+
+  # Умный сервис (RuModernBERT)
+  bert_api:
+    build:
+      context: .
+      dockerfile: bert_service/Dockerfile
+    container_name: sentiment_bert
+    ports:
+      - "8001:8000"
+    volumes:
+      - ./models:/app/models
+    restart: unless-stopped

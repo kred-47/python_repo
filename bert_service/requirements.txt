@@ -1,0 +1,9 @@
+fastapi
+uvicorn[standard]
+pydantic
+transformers>=4.45.0
+torch
+accelerate
+scikit-learn
+pandas
+datasets
