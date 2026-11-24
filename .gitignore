@@ -22,3 +22,8 @@ __pycache__/
 
 # Data (скачивается через src/data_loader.py)
 data/raw/
+
+# Сгенерированные данные, локальные чекпоинты и чужие веса — в репозиторий не тянем
+data/processed/
+models/
+bert_results/
