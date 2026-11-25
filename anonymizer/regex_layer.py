@@ -129,6 +129,32 @@ STOP_VALUES = {
     "не требуется", "none", "null", "-", "—",
 }
 
+# --- ФИО по контексту -------------------------------------------------------
+# После подсказки имя берём целиком (до трёх слов), чтобы не зависеть от того,
+# увидела ли модель фамилию в непривычной формулировке.
+NAME = r"[А-ЯЁ][а-яё\-]+(?:\s+[А-ЯЁ][а-яё\-]+){0,2}"
+
+RE_FIO_LABEL = re.compile(rf"(?i:(?:фио|ф\.\s?и\.\s?о\.))\s*[:=]?\s*({NAME})")
+RE_CITIZEN = re.compile(rf"(?i:(?:гражданин|гражданка|гр\.))\s+({NAME})")
+RE_CALLED = re.compile(
+    rf"(?i:(?:меня зовут|его зовут|её зовут|ее зовут|зовут))\s+({NAME})"
+)
+RE_ON_NAME = re.compile(rf"(?i:на имя)\s+({NAME})")
+
+# Минимум слов в имени: одно допустимо, потому что подсказка уже сработала.
+NAME_RULES: tuple[tuple[re.Pattern[str], int], ...] = (
+    (RE_FIO_LABEL, 1),
+    (RE_CITIZEN, 1),
+    (RE_CALLED, 1),
+    (RE_ON_NAME, 1),
+)
+
+# «Гражданин России» — не ФИО, хотя формально похоже.
+NAME_STOPWORDS = {
+    "россии", "россию", "россия", "российской", "федерации", "руси",
+    "москвы", "москве", "москву", "москва",
+}
+
 RULES: tuple[tuple[str, re.Pattern[str], Callable[[str], bool] | None], ...] = (
     ("EMAIL", RE_EMAIL, None),
     ("BANK_ACC", RE_ACCOUNT, None),
@@ -215,6 +241,22 @@ def find_regex_entities(text: str) -> list[dict]:
                 continue
             found.setdefault((start, end), {
                 "type": entity_type,
+                "start": start,
+                "end": end,
+                "text": value,
+            })
+
+    for pattern, min_words in NAME_RULES:
+        for match in pattern.finditer(text):
+            start, end = match.start(1), match.end(1)
+            value = text[start:end]
+            words = value.split()
+            if len(words) < min_words:
+                continue
+            if any(word.lower().strip(".,") in NAME_STOPWORDS for word in words):
+                continue
+            found.setdefault((start, end), {
+                "type": "PER",
                 "start": start,
                 "end": end,
                 "text": value,
